@@ -13,7 +13,7 @@ function App() {
 		    <Route exact path = '/' component = {Landing} />
 		    <PrivateRoute path = '/ctm' component = {CTM} />
 		    <PrivateRoute path = '/cth' component = {CTH} />
-		    <Route path="*" component={() => "404 Not Found"} />
+		    <Route path="*" component={() => "404 Not Found (Check the URL)"} />
 	    </Switch>
     </BrowserRouter>
   );

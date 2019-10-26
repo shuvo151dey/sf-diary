@@ -95,13 +95,14 @@ class DetailModal extends React.Component {
                                                         {updates.map((update, index) => {
                                                             return (
                                                                 <ListGroupItem 
-                                                                className={"border-0 p-0"} 
-                                                                key={update}>
-                                                                    {((index%2) ? "- " : "") + this.state.details[update]}
+                                                                    className={"border-0 p-0"} 
+                                                                    key={update}>
+                                                                        {((index%2) ? "- " : "") + this.state.details[update]}
                                                                 </ListGroupItem>
                                                             );
                                                         })}
-                                                  </ListGroup>}
+                                                  </ListGroup>
+                                                }
                                             </td>
                                         </tr>
                                     );

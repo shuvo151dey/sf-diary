@@ -130,7 +130,7 @@ class Table extends React.Component {
 						data = {this.state.tableData}
 						LoadingComponent = {LoadingIndicator}
 						columns = {(this.props.type === 'alumni') ? this.state.columns_alumni : this.state.columns_company}
-						defaultPageSize = {10}
+						defaultPageSize = {100}
 						sortable = {false}
 					/>
 				</div>
