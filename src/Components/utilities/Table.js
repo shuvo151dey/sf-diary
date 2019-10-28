@@ -17,6 +17,16 @@ const LoadingIndicator = props => {
     </div>
 }  
 
+function filterCaseInsensitive(filter, row) {
+    const id = filter.pivotId || filter.id;
+    return (
+        row[id] !== undefined ?
+            String(row[id].toLowerCase()).startsWith(filter.value.toLowerCase())
+        :
+            true
+    );
+}
+
 class Table extends React.Component {
 	constructor(props) {
 		super(props);
@@ -132,6 +142,7 @@ class Table extends React.Component {
 						columns = {(this.props.type === 'alumni') ? this.state.columns_alumni : this.state.columns_company}
 						defaultPageSize = {100}
 						sortable = {false}
+						defaultFilterMethod={(filter, row) => filterCaseInsensitive(filter, row) }
 					/>
 				</div>
 			</Fragment> :
@@ -160,6 +171,7 @@ class Table extends React.Component {
 						}
 						defaultPageSize = {100}
 						sortable = {false}
+						defaultFilterMethod={(filter, row) => filterCaseInsensitive(filter, row) }
 					/>
 				</div>
 			</Fragment>
