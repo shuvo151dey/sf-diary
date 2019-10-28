@@ -158,7 +158,7 @@ class Table extends React.Component {
 							? this.state.columns_company
 							: this.state.columns_ctm
 						}
-						defaultPageSize = {10}
+						defaultPageSize = {100}
 						sortable = {false}
 					/>
 				</div>
