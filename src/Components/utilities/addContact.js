@@ -100,13 +100,13 @@ class AddContact extends React.Component {
                     <ModalHeader toggle={this.toggle}>Add {this.props.type.charAt(0).toUpperCase() + this.props.type.slice(1)} Contact</ModalHeader>
                     <ModalBody>
                         <Form onSubmit={this.handleSubmit}>
-                        <FormGroup><Input type="text" placeholder={(this.props.type === "alumni") ?"Name" : "Comapny Name"} name="name" value={this.state.formData.name} onChange={this.handleChange} /></FormGroup>
+                        <FormGroup><Input type="text" placeholder={(this.props.type === "alumni") ?"Name*" : "Comapny Name*"} name="name" value={this.state.formData.name} onChange={this.handleChange} /></FormGroup>
                             {
                                 (this.props.type === "company") ?
-                                    <FormGroup><Input type="text" placeholder="Contact Person name" name="contact_name" value={this.state.formData.contact_name} onChange={this.handleChange} /></FormGroup>
+                                    <FormGroup><Input type="text" placeholder="Contact Person name*" name="contact_name" value={this.state.formData.contact_name} onChange={this.handleChange} /></FormGroup>
                                      : ""
                             }
-                            <FormGroup><Input type="number" placeholder="Phone number" name="mobile" value={this.state.formData.mobile} onChange={this.handleChange} /></FormGroup>
+                            <FormGroup><Input type="number" placeholder="Phone number*" name="mobile" value={this.state.formData.mobile} onChange={this.handleChange} /></FormGroup>
                             <FormGroup><Input type="email" placeholder="Email" name="email" value={this.state.formData.email} onChange={this.handleChange} /></FormGroup>
                             {
                                 (this.props.type === "alumni") ?
@@ -114,7 +114,7 @@ class AddContact extends React.Component {
                                     : <FormGroup><Input type="text" placeholder="Post of Contact" name="post" value={this.state.formData.post} onChange={this.handleChange} /></FormGroup>
                             }
                             <FormGroup><Input type="text" placeholder="Address" name="addr" value={this.state.formData.addr} onChange={this.handleChange} /></FormGroup>
-                            <FormGroup><Input type="text" placeholder="First Update" name="update" value={this.state.formData.update} onChange={this.handleChange} /></FormGroup>
+                            <FormGroup><Input type="text" placeholder="First Update*" name="update" value={this.state.formData.update} onChange={this.handleChange} /></FormGroup>
                             <FormGroup><Input type="text" placeholder="Remarks" name="remarks" value={this.state.formData.remarks} onChange={this.handleChange} /></FormGroup>
                             <Button>Add Contact</Button>
                         </Form>
