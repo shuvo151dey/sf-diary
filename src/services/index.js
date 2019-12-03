@@ -3,10 +3,14 @@ import { trackPromise } from 'react-promise-tracker';
 
 export const login = (data) => 
 	trackPromise(HTTP.post('sfdiary/login', JSON.stringify(data), {
+
 		headers: {
-			"Content-Type": "application/json"
+			"Content-Type": "application/json",
+			"Access-Control-Allow-Origin": "*",
+			"Access-Control-Allow-Origin":"true",
 		}
 	}).then(res => {
+
 		return res.data;
 	}).catch(err => {
 		console.log(err);
