@@ -49,9 +49,6 @@ class AddContact extends React.Component {
         }
         else {
             if (this.props.type === "alumni") {
-                
-                if(this.state.formData.mobile!="")
-               { 
                 const temp = {
                     member_id: localStorage.getItem('id'),
                     name: this.state.formData.name,
@@ -65,31 +62,10 @@ class AddContact extends React.Component {
                 const response = await newAlumni(temp);
                 const Data = await getData({id: localStorage.getItem('id'), type: this.props.type});
                 this.props.addAlumni(Data.data);
-                console.log(response);
                 alert(response.data);
-            }
-            else
-            { 
-                const temp = {
-                    member_id: localStorage.getItem('id'),
-                    name: this.state.formData.name,
-                    mobile: " ",
-                    email: this.state.formData.email,
-                    linkedin: this.state.formData.linkedin,
-                    addr: this.state.formData.addr,
-                    remarks: this.state.formData.remarks,
-                    update: this.state.formData.update
-                };
-                const response = await newAlumni(temp);
-                const Data = await getData({id: localStorage.getItem('id'), type: this.props.type});
-                this.props.addAlumni(Data.data);
-                console.log(response);
-                alert(response.data);
-            }
             }
             else {
-                if(this.state.formData.mobile!="")
-                {const temp = {
+                const temp = {
                     member_id: localStorage.getItem('id'),
                     company_name: this.state.formData.name,
                     contact_name: this.state.formData.contact_name,
@@ -100,42 +76,10 @@ class AddContact extends React.Component {
                     addr: this.state.formData.addr,
                     remarks: this.state.formData.remarks
                 };
-              // console.log(temp);
-                //alert(this.state.formData.mobile);
                 const response = await newCompany(temp);
                 const Data = await getData({id: localStorage.getItem('id'), type: this.props.type});
                 this.props.addCompany(Data.data);
-                console.log(response);
-                 if(response.code==-2)
-                    alert("Please fill all fields");
-                    else
-               alert(response.data);
-            }
-            else
-            {
-                const temp = {
-                    member_id: localStorage.getItem('id'),
-                    company_name: this.state.formData.name,
-                    contact_name: this.state.formData.contact_name,
-                    mobile: " ",
-                    email: this.state.formData.email,
-                    update: this.state.formData.update,
-                    post: this.state.formData.post,
-                    addr: this.state.formData.addr,
-                    remarks: this.state.formData.remarks
-                };
-                //alert(this.state.formData.mobile);
-                const response = await newCompany(temp);
-                const Data = await getData({id: localStorage.getItem('id'), type: this.props.type});
-                this.props.addCompany(Data.data);
-                console.log(response);
-                if(response.code==-2)
-                    alert("Please fill all fields");
-                    else
-
                 alert(response.data);
-            }
-                
             }
             this.toggle();
         }
@@ -162,7 +106,7 @@ class AddContact extends React.Component {
                                     <FormGroup><Input type="text" placeholder="Contact Person name*" name="contact_name" value={this.state.formData.contact_name} onChange={this.handleChange} /></FormGroup>
                                      : ""
                             }
-                            <FormGroup><Input type="number" placeholder="Phone number" name="mobile" value={this.state.formData.mobile} onChange={this.handleChange} /></FormGroup>
+                            <FormGroup><Input type="number" placeholder="Phone number*" name="mobile" value={this.state.formData.mobile} onChange={this.handleChange} /></FormGroup>
                             <FormGroup><Input type="email" placeholder="Email" name="email" value={this.state.formData.email} onChange={this.handleChange} /></FormGroup>
                             {
                                 (this.props.type === "alumni") ?
