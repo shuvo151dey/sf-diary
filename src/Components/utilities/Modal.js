@@ -3,13 +3,14 @@ import {
     Button, Row, Col,
     Modal, ModalHeader, ModalBody, ModalFooter,
     Form, Input, FormGroup,
-    ListGroup, ListGroupItem
+    ListGroup, ListGroupItem, Label, Card, CardHeader, CardBody
 } from 'reactstrap';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { getDetails, addUpdate, getData } from '../../services'
+import gCalendar from '../../Config/gCalendarConfig.json'
 import { addAlumni, addCompany } from '../../Actions'
-
+var gapi = window.gapi
 class DetailModal extends React.Component {
     constructor(props) {
         super(props);
@@ -17,12 +18,63 @@ class DetailModal extends React.Component {
             modal: false,
             value: '',
             details: {},
-            table: []
+            table: [],
+            gc_title: "",
+            gc_body: "",
+            gc_date: "",
+            gc_time: ""
         };
+    } 
+    handleClick = () => {
+        gapi.load('client:auth2', () => {
+            console.log("gapi loaded")
+            gapi.client.init({
+                apiKey: gCalendar.API_KEY,
+                clientId: gCalendar.CLIENT_ID,
+                discoveryDocs: gCalendar.DISCOVERY_DOCS,
+                scope: gCalendar.SCOPES
+            })
+            gapi.client.load('calendar', 'v3', ()=> {console.log('OK!')})
+            gapi.auth2.getAuthInstance().signIn()
+            .then(() => {
+                var endtime = this.state.gc_time
+                var h = Number(endtime.slice(0, 2))+1
+                endtime = ('0' + h).slice(-2) + endtime.slice(2)
+                var event = {
+                    'summary': this.state.gc_title,
+                    'description': this.state.gc_body,
+                    'start': {
+                        'dateTime': this.state.gc_date+'T'+this.state.gc_time+':00',
+                        'timeZone': 'Asia/Kolkata'
+                    },
+                    'end': {
+                        'dateTime': this.state.gc_date+'T'+endtime+':00',
+                        'timeZone': 'Asia/Kolkata'
+                    },
+                    'reminders': {
+                        'useDefault': false,
+                        'overrides': [
+                            {'method': 'popup', 'minutes': 120},
+                            {'method': 'popup', 'minutes': 30}
+                        ]
+                    }
+                };
+                var request = gapi.client.calendar.events.insert({
+                    'calendarId': 'primary',
+                    'resource': event
+                });
+                    
+                request.execute(function(event) {
+                    window.open(event.htmlLink);
+                });
+            }).catch((er) => {
+                console.log(er.error)
+            })
+        })
     }
 
     handleChange = (e) => {
-        this.setState({value: e.target.value})
+        this.setState({[e.target.name]: e.target.value})
     }
 
     handleSubmit = async (e) => {
@@ -42,7 +94,6 @@ class DetailModal extends React.Component {
             console.log(temp);
             const Data = await getData({id: localStorage.getItem('id'), type: this.props.type});
             (this.props.type === 'alumni') ? this.props.addAlumni(Data.data) : this.props.addCompany(Data.data);
-            alert(response.data);
             this.toggle();
         }
         this.setState({value: ''})
@@ -85,7 +136,7 @@ class DetailModal extends React.Component {
                             {
                                 this.state.table.map((row) => {
                                     const keys = Object.keys(this.state.details);
-                                    const updates = keys.splice(9, 2*(this.state.details.n_updates-1)).concat(keys.splice(-3, 1), keys.splice(-1, 1));
+                                    const updates = keys.splice(13, 2*(this.state.details.n_updates-1)).concat(keys.splice(-3, 1), keys.splice(-1, 1));
                                     return (
                                         <tr key={row.index}>
                                             <td>{row.Header}</td>
@@ -115,8 +166,74 @@ class DetailModal extends React.Component {
                             ? "" : 
                             <Form onSubmit={this.handleSubmit}>
                                 <Row form>
-                                    <Col md={8}><FormGroup><Input type="text" placeholder="Add Update" value={this.state.value} onChange={this.handleChange} /></FormGroup></Col>
-                                    <Col md={4}><Button className="float-left">Add Update</Button></Col>
+                                    <Col md={8}>
+                                        <FormGroup>
+                                            <Input 
+                                                type="text" 
+                                                name="value" 
+                                                placeholder="Add Update" 
+                                                value={this.state.value} 
+                                                onChange={this.handleChange} 
+                                            />
+                                        </FormGroup>
+                                    </Col>
+                                    <Col md={4}>
+                                        <Button className="float-left">
+                                            Add Update
+                                        </Button>
+                                    </Col>
+                                    <Col md={12}>
+                                        <Card>
+                                            <CardHeader>
+                                                <h6>Add Reminder through Google Calendar</h6>
+                                            </CardHeader>
+                                            <CardBody>
+                                                <FormGroup>
+                                                    <Input 
+                                                        type="text" 
+                                                        name="gc_title" 
+                                                        placeholder="Event Summary" 
+                                                        value={this.state.gc_title} 
+                                                        onChange={this.handleChange} 
+                                                    />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <Input 
+                                                        type="textarea" 
+                                                        name="gc_body" 
+                                                        placeholder="Event Details" 
+                                                        value={this.state.gc_body} 
+                                                        onChange={this.handleChange} 
+                                                    />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <Label>Event Date</Label>
+                                                    <Input 
+                                                        type="date" 
+                                                        name="gc_date" 
+                                                        placeholder="Event date" 
+                                                        value={this.state.gc_date}
+                                                        onChange={this.handleChange} 
+                                                    />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                    <Label>Event Time</Label>
+                                                    <Input 
+                                                        type="time" 
+                                                        name="gc_time" 
+                                                        placeholder="Event Time" 
+                                                        value={this.state.gc_time}
+                                                        onChange={this.handleChange} 
+                                                    />
+                                                </FormGroup>
+                                                <Button className="float-left" onClick={this.handleClick}>
+                                                    Add Event to Google Calendar
+                                                </Button>
+                                            </CardBody>
+                                        </Card>
+                                    </Col>
+                                    
+                                    
                                 </Row>
                             </Form>
                         }
