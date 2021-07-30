@@ -3,13 +3,15 @@ import {
     Button, Row, Col,
     Modal, ModalHeader, ModalBody, ModalFooter,
     Form, Input, FormGroup,
-    ListGroup, ListGroupItem, Label, Card, CardHeader, CardBody
+    ListGroup, ListGroupItem, Label, Card, CardHeader, CardBody, Alert
 } from 'reactstrap';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { getDetails, addUpdate, getData } from '../../services'
 import gCalendar from '../../Config/gCalendarConfig.json'
 import { addAlumni, addCompany } from '../../Actions'
+
+require('dotenv').config()
 var gapi = window.gapi
 class DetailModal extends React.Component {
     constructor(props) {
@@ -22,15 +24,37 @@ class DetailModal extends React.Component {
             gc_title: "",
             gc_body: "",
             gc_date: "",
-            gc_time: ""
+            gc_time: "",
+            event_message: ""
         };
     } 
     handleClick = () => {
+        var callback = (link) => {
+            //window.open(link);
+            this.setState({event_message: (
+                <Alert color="success">
+                    The event is successfully created. Go to:<br/> 
+                    <a href={link} target="_blank">{link}</a>.
+                </Alert>
+            )})
+        }
+        if (!this.state.gc_title) {
+            alert("Event title is required")
+            return
+        }
+        if (!this.state.gc_time) {
+            alert("Event time is required")
+            return
+        }
+        if (!this.state.gc_date) {
+            alert("Event date is required")
+            return
+        }
         gapi.load('client:auth2', () => {
             console.log("gapi loaded")
             gapi.client.init({
-                apiKey: gCalendar.API_KEY,
-                clientId: gCalendar.CLIENT_ID,
+                apiKey: process.env.REACT_APP_API_KEY,
+                clientId: process.env.REACT_APP_CLIENT_ID,
                 discoveryDocs: gCalendar.DISCOVERY_DOCS,
                 scope: gCalendar.SCOPES
             })
@@ -65,7 +89,7 @@ class DetailModal extends React.Component {
                 });
                     
                 request.execute(function(event) {
-                    window.open(event.htmlLink);
+                    callback(event.htmlLink)
                 });
             }).catch((er) => {
                 console.log(er.error)
@@ -192,7 +216,7 @@ class DetailModal extends React.Component {
                                                     <Input 
                                                         type="text" 
                                                         name="gc_title" 
-                                                        placeholder="Event Summary" 
+                                                        placeholder="Event Summary*" 
                                                         value={this.state.gc_title} 
                                                         onChange={this.handleChange} 
                                                     />
@@ -207,7 +231,7 @@ class DetailModal extends React.Component {
                                                     />
                                                 </FormGroup>
                                                 <FormGroup>
-                                                    <Label>Event Date</Label>
+                                                    <Label>Event Date*</Label>
                                                     <Input 
                                                         type="date" 
                                                         name="gc_date" 
@@ -217,7 +241,7 @@ class DetailModal extends React.Component {
                                                     />
                                                 </FormGroup>
                                                 <FormGroup>
-                                                    <Label>Event Time</Label>
+                                                    <Label>Event Time*</Label>
                                                     <Input 
                                                         type="time" 
                                                         name="gc_time" 
@@ -226,9 +250,10 @@ class DetailModal extends React.Component {
                                                         onChange={this.handleChange} 
                                                     />
                                                 </FormGroup>
-                                                <Button className="float-left" onClick={this.handleClick}>
+                                                <Button onClick={this.handleClick}>
                                                     Add Event to Google Calendar
                                                 </Button>
+                                                <div className="mt-3">{this.state.event_message}</div>
                                             </CardBody>
                                         </Card>
                                     </Col>
