@@ -6,7 +6,7 @@ import auth from '../Config/Auth'
 import { addUser } from '../Actions'
 import { login } from '../services'
 import sflogo from '../assets/sflogo.png'
-import '../Stylesheets/Landings.sass'
+import '../Stylesheets/Landings.css'
 
 import { 
 	Form, Input,
@@ -40,15 +40,15 @@ class Landing extends Component {
 	handleSubmit = async (e) => {
 		e.preventDefault();
 		const userDetails = await login(this.state.data);
-		if (userDetails.data.por === 'ctm' || userDetails.data.por === 'cth') {
+		if (userDetails.data.type === 'ctm' || userDetails.data.type === 'cth') {
 			this.props.addUser(userDetails.data);
 			localStorage.setItem('id', userDetails.data.id);
-			auth.login(userDetails.data.por, () => {
-				this.props.history.push('/' + userDetails.data.por)
+			auth.login(userDetails.data.type, () => {
+				this.props.history.push('/' + userDetails.data.type)
 			});
 		}
 		else {
-			alert(userDetails.data);
+			alert(userDetails.data.type);
 		}
 	}
 
